@@ -3,7 +3,14 @@ var express = require('express'),
     http = require('https');
 
 getUrl = function(name) {
-  return 'https://euw.api.pvp.net/api/lol/euw/v1.4/summoner/by-name/' + name +'?api_key=' + process.env.LOL_API_KEY;
+  return {
+    protocol: 'https:',
+    host: 'euw.api.pvp.net',
+    path: '/api/lol/euw/v1.4/summoner/by-name/' + name +'?api_key=' + process.env.LOL_API_KEY,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
 };
 
 router.get('/', function(req, res, next) {
@@ -11,23 +18,16 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/summoner/:name', function(req, res, next) {
-  http.get(getUrl(req.params.name), (res) => {
-    res.on('data', (d) => {
-      process.stdout.write(d);
+  http.get(getUrl(req.params.name), (response) => {
+    var body = '';
+    response.setEncoding('utf8');
+    response.on('data', (chunk) => {
+        body += chunk;
+      });
+    }).on('end', (end) => {
+      console.log("DATA:" + body);
     });
-
-  }).on('error', (e) => {
-    console.error(e);
-  });
-  // http.request(getRequest(req.params.name), function(res) {
-  //   console.log('STATUS: ' + res.statusCode);
-  //   console.log('HEADERS: ' + JSON.stringify(res.headers));
-  //   res.setEncoding('utf8');
-  //   res.on('data', function (chunk) {
-  //     console.log('BODY: ' + chunk);
-  //   });
-  // }).end();
-  res.end();
+  // res.send(test);
 });
 
 module.exports = router;
