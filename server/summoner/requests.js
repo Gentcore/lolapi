@@ -24,7 +24,7 @@ newRequest = function(destination, responseCallback) {
   rest.get(destination)
   .end(function(response) {
     responseCallback(response.body);
-    eventBus.newSummoner(response.body);
+    eventBus.newSummoner(response);
   });
 };
 

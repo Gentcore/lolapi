@@ -7,8 +7,9 @@ function EventBus () {
   EventEmitter.call(this);
 }
 
-EventBus.prototype.newSummoner = function(summoner) {
-  this.emit('NewSummoner', summoner);
+EventBus.prototype.newSummoner = function(response) {
+  if(response.status != 200) return;
+  this.emit('NewSummoner', response.body);
 };
 
 module.exports = new EventBus();
